@@ -81,11 +81,11 @@ class DBStorage():
         Args:
         obj: The object to be added.
         """
-        pass
+        self.__session.add(obj)
 
     def save(self):
         """Commits all changes to the current database session."""
-        pass
+        self.__session.commit()
 
     def delete(self, obj=None):
         """
@@ -94,8 +94,15 @@ class DBStorage():
         Args:
         obj: The object to be deleted.
         """
-        pass
+        if obj:
+            self.__session.delete(obj)
 
     def reload(self):
         """Creates all tables in the database and starts a new session."""
-        pass
+        Base.metadata.create_all(self.__engine)
+        session_factory = sessionmaker(
+            bind=self.__engine,
+            expire_on_commit=False
+        )
+        Session = scoped_session(session_factory)
+        self.__session = Session()
