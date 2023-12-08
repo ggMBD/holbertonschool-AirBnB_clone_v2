@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from models import storage
+import models
 
 Base = declarative_base()
 
@@ -21,7 +21,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
-            storage.new(self)
+            models.storage.new(self)
         else:
             kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
@@ -39,8 +39,8 @@ class BaseModel:
         """Updates updated_at with the current
         time when the instance is changed"""
         self.updated_at = datetime.utcnow()
-        storage.new(self)
-        storage.save()
+        models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
         '''Return dictionary representation of instance.'''
@@ -58,6 +58,6 @@ class BaseModel:
         return dictionary
 
     def delete(self):
-        """Deletes the current instance from the storage"""
-        storage.delete(self)
-        storage.save()
+        """Deletes the current instance from the models.storage"""
+        models.storage.delete(self)
+        models.storage.save()
