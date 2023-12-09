@@ -6,7 +6,18 @@ from models.base_model import BaseModel, Base
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes"""
+    """Represents a user for a MySQL database.
+
+    Attributes:
+        email (str): The email address of the user.
+        password (str): The password associated with the user.
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
+
+    Relationships:
+        places (relationship): One-to-Many relationship with the Place class.
+        reviews (relationship): One-to-Many relationship with the Review class.
+    """
     __tablename__ = "users"
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)

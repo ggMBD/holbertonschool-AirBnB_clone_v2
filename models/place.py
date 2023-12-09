@@ -1,13 +1,50 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 from models.base_model import BaseModel, Base
 from models.review import Review
+from models.amenity import Amenity
 from os import getenv
 
+association_table = Table(
+    'place_amenity',
+    Base.metadata,
+    Column(
+        'place_id',
+        String(60),
+        ForeignKey('places.id'),
+        primary_key=True,
+        nullable=False),
+    Column(
+        'amenity_id',
+        String(60),
+        ForeignKey('amenities.id'),
+        primary_key=True,
+        nullable=False))
+
+
 class Place(BaseModel, Base):
-    """ A place to stay """
+    """ Represents a Place for a MySQL database.
+
+    Attributes:
+        city_id (str): The ID of the city where the place is located.
+        user_id (str): The ID of the user who owns the place.
+        name (str): The name of the place.
+        description (str): A description of the place.
+        number_rooms (int): The number of rooms in the place.
+        number_bathrooms (int): The number of bathrooms in the place.
+        max_guest (int): The maximum number of guests.
+        price_by_night (int): The price per night for staying at the place.
+        latitude (float): The latitude coordinate of the place.
+        longitude (float): The longitude coordinate of the place.
+
+    Relationships:
+        reviews (relationship):
+            One-to-Many relationship with the Review class.
+        amenities (relationship):
+            Many-to-Many relationship with the Amenity class.
+    """
     __tablename__ = "places"
     city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
@@ -21,7 +58,15 @@ class Place(BaseModel, Base):
     longitude = Column(Float)
     amenity_ids = []
     if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship("Review", backref="place", cascade="delete")
+        reviews = relationship(
+            "Review",
+            backref="place",
+            cascade="delete")
+        amenities = relationship(
+            "Amenity",
+            secondary="place_amenity",
+            back_populates="place_amenities",
+            viewonly=False)
     else:
         @property
         def reviews(self):
@@ -32,3 +77,16 @@ class Place(BaseModel, Base):
                 if review.place_id == self.id:
                     reviews_list.append(review)
             return reviews_list
+
+        @property
+        def amenities(self):
+            """ Getter attribute for amenities in FileStorage """
+            from models import storage
+            return [storage.all(Amenity)[amenity_id]
+                    for amenity_id in self.amenity_ids]
+
+        @amenities.setter
+        def amenities(self, amenity):
+            """ Setter attribute for amenities in FileStorage """
+            if isinstance(amenity, Amenity):
+                self.amenity_ids.append(amenity.id)

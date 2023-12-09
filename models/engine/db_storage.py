@@ -32,7 +32,7 @@ class DBStorage():
         """
         Initializes a new instance of DBStorage.
 
-        Creates the SQLAlchemy engine and drops tables if in testing environment.
+        Creates the SQLAlchemy engine.
         """
         self.__engine = create_engine(
             "mysql+mysqldb://{}:{}@{}/{}".format(
@@ -54,7 +54,8 @@ class DBStorage():
         cls (class): The class to filter objects by.
 
         Returns:
-        dict: A dictionary containing all objects, formatted as "{class_name}.{id}".
+        dict: A dictionary containing all objects,
+        formatted as "{class_name}.{id}".
         """
         if cls is not None:
             if isinstance(cls, str):
