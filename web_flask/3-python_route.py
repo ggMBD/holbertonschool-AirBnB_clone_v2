@@ -24,7 +24,6 @@ def display_c(text):
     return f"C {formatted_text}"
 
 
-
 @app.route('/python/<text>', strict_slashes=False)
 @app.route('/python/', strict_slashes=False)
 def display_python(text="is cool"):
