@@ -7,7 +7,7 @@ to interact with a MySQL database for the AirBnB Clone project.
 from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import *
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker, Session
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -107,3 +107,7 @@ class DBStorage():
         )
         Session = scoped_session(session_factory)
         self.__session = Session()
+
+    def close(self):
+        """Close the working SQLAlchemy session."""
+        self.__session.close()
