@@ -22,7 +22,6 @@ class State(BaseModel, Base):
             "City", backref="state", cascade="delete")
 
     if getenv("HBNB_TYPE_STORAGE") != 'db':
-        
         @property
         def cities(self):
             """ get list of all related city obj"""
