@@ -7,22 +7,6 @@ from models.review import Review
 from models.amenity import Amenity
 from os import getenv
 
-association_table = Table(
-    'place_amenity',
-    Base.metadata,
-    Column(
-        'place_id',
-        String(60),
-        ForeignKey('places.id'),
-        primary_key=True,
-        nullable=False),
-    Column(
-        'amenity_id',
-        String(60),
-        ForeignKey('amenities.id'),
-        primary_key=True,
-        nullable=False))
-
 
 class Place(BaseModel, Base):
     """ Represents a Place for a MySQL database.
@@ -69,6 +53,17 @@ class Place(BaseModel, Base):
 
     amenity_ids = []
     if getenv("HBNB_TYPE_STORAGE", None) != "db":
+        city_id = ""
+        user_id = ""
+        name = ""
+        description = ""
+        number_romms = 0
+        max_guest = 0
+        price_by_night = 0
+        latitude = 0.0
+        longitude = 0.0
+        amenity_ids = []
+        
         @property
         def reviews(self):
             """ Getter attribute for reviews in FileStorage """
